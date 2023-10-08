@@ -75,9 +75,8 @@
         const input = document.getElementById("input");
         const messages = document.getElementById("messages");
         const welcome = document.getElementById("welcome");
-
         const username = prompt("Enter your username, please");
-        welcome.textContent = `Welcome to the chat ${username}`;
+        welcome.textContent = `Welcome to the chat : ${username}`;
 
         form.addEventListener("submit", (event) => {
             event.preventDefault();
@@ -89,7 +88,7 @@
 
         socket.on("chat message", (data) => {
             const li = document.createElement("li");
-            li.textContent = `${moment(data.timestamp).format('HH:mm')} : / ${data.username}: ${data.message}`;
+            li.innerHTML = `${moment(data.timestamp).format('HH:mm')} → <strong>${data.username}</strong> : ${data.message} .`;
             messages.appendChild(li);
         });
     </script>
