@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.io Chat App</title>
+    <style>
+        body {
+            background-color: #a25e5e; /* Set the background color */
+            font-family: Arial, sans-serif; /* Optional: Choose a font */
+        }
+         h1{
+            text-align: center;
+            padding: 25px;
+         }
+        #chat {
+            width: 500px; /* Adjust the width as needed */
+            margin: 0 auto; /* Center the chat horizontally */
+            padding: 20px;
+            background-color: #ffffff; /* Set the chat background color */
+            border: 1px solid #ccc; /* Add a border around the chat */
+            border-radius: 8px; /* Optional: Rounded corners for the chat */
+        }
+        
+        #welcome {
+            font-weight: bold; /* Make the welcome message bold */
+        }
+        
+        #messages {
+            list-style-type: none; /* Remove bullet points from chat messages */
+            padding: 0;
+        }
+        
+        #messages li {
+            margin-bottom: 5px; /* Add spacing between chat messages */
+        }
+        
+        /* Style the timestamp */
+        .timestamp {
+            color: #999; /* Customize the timestamp color */
+            margin-right: 10px; /* Add spacing between timestamp and message */
+        }
+        
+        /* Style the chat input form */
+        #form {
+            margin-top: 100px; /* Add spacing between messages and the input form */
+        }
+        
+        /* Style the file upload form */
+        #file-upload-form {
+            margin-top: 10px; /* Add spacing between messages and the file upload form */
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+</head>
+<body>
+    <h1>Socket.io Chat App</h1>
+    <div id="chat">
+        <div id="welcome"></div>
+        <ul id="messages"></ul>
+        <form id="form" action="">
+            <input id="input" autocomplete="off" /><button>Send</button>
+        </form>
+          <form action="/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <input type="submit" value="Upload File">
+          </form>
+    </div>
+
+    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
+    
+    <script>
+        const socket = io("http://localhost:3000");
+        const form = document.getElementById("form");
+        const input = document.getElementById("input");
+        const messages = document.getElementById("messages");
+        const welcome = document.getElementById("welcome");
+
+        const username = prompt("Enter your username, please");
+        welcome.textContent = `Welcome to the chat ${username}`;
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            if (input.value) {
+                socket.emit("chat message", { username, message: input.value });
+                input.value = "";
+            }
+        });
+
+        socket.on("chat message", (data) => {
+            const li = document.createElement("li");
+            li.textContent = `${moment(data.timestamp).format('HH:mm')} : / ${data.username}: ${data.message}`;
+            messages.appendChild(li);
+        });
+    </script>
+</body>
+</html>
