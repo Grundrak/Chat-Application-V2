@@ -10,7 +10,6 @@ const messages = [];
 
 app.use(express.static(path.join(__dirname, 'public')));
 const upload = multer({ dest: 'public/uploads/' });
-
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
@@ -26,19 +25,13 @@ const logger = winston.createLogger({
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-app.get('/greet', (req, res) => {
-  const name = 'John'; // Replace with logic to get the user's name
-  const greeting = req.t('greeting', { name });
-  const welcomeMessage = req.t('common:welcome');
 
-  res.send(`${greeting} ${welcomeMessage}`);
-});
 const server = http.createServer(app);
 
 const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:8080" // Update the origin as needed
+    origin: "http://localhost:8080" 
   }
 });
 
@@ -52,13 +45,6 @@ io.on('connection', (socket) => {
       messages.push({ username: data.username, message: data.message });
       io.emit('chat message', { username: data.username, message: data.message });
     });
-    socket.on('file uploaded', (data) => {
-      const { filename, originalname } = data;
-      // Handle the file uploaded event and display the file information in the chat
-      const message = `File uploaded: ${originalname} (${filename})`;
-      io.emit('chat message', { username: 'System', message });
-    });
-    
     socket.on('disconnect', () => {
       console.log('User disconnected');
     });
